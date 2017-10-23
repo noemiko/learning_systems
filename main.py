@@ -1,5 +1,5 @@
-from learning_systems.data_extractor import DataExtractor
-from learning_systems.entrophy import Entrophy
+from data_extractor import DataExtractor
+from entrophy import Entrophy
 
 
 class Analyzer(object):
