@@ -86,17 +86,25 @@ class DataExtractor(object):
     #         msg = "not all data has rules, add rule for {}".format(index)
     #         exit(msg)
     #
-    def get_columns_as_rows(self):
-        matrix = self.data_rows.copy()
-        columns = len(matrix[0])
+    def get_columns_as_rows(self, rows):
+        columns = len(rows[0])
         for column_index in range(0, columns):
-            yield map(lambda x: x[column_index], matrix)
+            yield map(lambda x: x[column_index], rows)
+
+    def get_specyfic_group_rows_with_attribute(self, group_name, attribute):
+        group_index = self.labels.index(group_name)
+        for row in self.data_rows:
+            if row[group_index] == attribute:
+                yield row
+
 
 if __name__ == "__main__":
 
     analyzer = DataExtractor('./zoo.data.txt', True)
-    print(analyzer.labels)
-    print(analyzer.data_rows)
-    for index, column in enumerate(analyzer.get_columns_as_rows()):
-        print("Column name: {}".format(analyzer.labels[index]))
-        print(list(column))
+    rows = analyzer.get_specyfic_group_rows_with_attribute('outlook', 'sunny')
+    print(list(rows))
+    # print(analyzer.labels)
+    # print(analyzer.data_rows)
+    # for index, column in enumerate(analyzer.get_columns_as_rows()):
+    #     print("Column name: {}".format(analyzer.labels[index]))
+    #     print(list(column))

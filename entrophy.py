@@ -19,7 +19,7 @@ class Entrophy(object):
 
     def get_entrophy_for_row(self, column):
         counted = self._count_values(column)
-        probability = self._count_probability(counted)
+        probability = self._count_fraction(counted)
         probability["entrophy"] = self._count_entrophy(probability)
         return probability
 
@@ -32,17 +32,17 @@ class Entrophy(object):
                 classes[item] += 1
         return classes
 
-    def _count_probability(self, counted_decisions):
-        probabilities = dict()
+    def _count_fraction(self, counted_decisions):
+        fractions = dict()
         all_decisions = sum(counted_decisions.values())
         for k, v in counted_decisions.items():
-            probability = v/all_decisions
-            probabilities[k] = round(probability,2)
-        return probabilities
+            fraction = v/all_decisions
+            fractions[k] = round(fraction,2)
+        return fractions
 
-    def _count_entrophy(self, probability):
+    def _count_entrophy(self, fraction):
         entrophy = 0
-        for v in probability.values():
+        for v in fraction.values():
             entrophy += v*log2(v)
 
         return round(entrophy * -1, 3)
