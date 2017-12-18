@@ -4,6 +4,15 @@ from math import log2
 class Entrophy(object):
 
     def get_entrophy_for_dict(self, attribute_classes):
+        """
+        :param attribute_classes dict with name of group, and attributes with classes:
+        {'temperatura': {'średnio': ['Play', 'Play', "Don'tPlay"], 'chłodno': ['Play', "Don'tPlay"]},
+        :return: informations about all groups
+        example:
+         'wilgotność':
+        {'count': 5, 'wysoka': {"Don'tPlay": 1.0, 'entrophy': -0.0, 'count': 3},
+        'normalna': {'Play': 1.0, 'entrophy': -0.0, 'count': 2}}
+        """
         entrophy_values = dict()
         for k, v in attribute_classes.items():
             entrophy_values.update({k: {}})
@@ -18,6 +27,12 @@ class Entrophy(object):
         return entrophy_values
 
     def get_entrophy_for_row(self, column):
+        """
+        :param column list with all classes
+        :return:
+        example
+        {"Don'tPlay": 0.4, 'entrophy': 0.971, 'Play': 0.6}
+        """
         counted = self._count_values(column)
         probability = self._count_fraction(counted)
         probability["entrophy"] = self._count_entrophy(probability)

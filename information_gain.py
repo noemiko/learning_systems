@@ -1,4 +1,3 @@
-
 def get_information_gain(entrophy_values, class_entrophy):
     info = dict()
     for attribute, entrophy in entrophy_values.items():

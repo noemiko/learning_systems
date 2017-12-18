@@ -49,8 +49,9 @@ class DataExtractor(object):
         example:
         {'class': ["Don'tPlay", "Don'tPlay", 'Play', (...)]}
         """
+        columns = self.get_columns_as_rows(rows)
         rows_with_labels = dict()
-        for index, row in enumerate(rows):
+        for index, row in enumerate(columns):
             label = self.labels[index]
             rows_with_labels.update({label:list(row)})
         return rows_with_labels
@@ -67,25 +68,6 @@ class DataExtractor(object):
                     attribute_classes[column_name][item].append(classification_column[index])
         return attribute_classes
 
-    # def make_format_data(self, raw_data):
-    #     formatted_data = []
-    #     for row in raw_data:
-    #         formatted_line = self.get_formatted_line(row)
-    #         formatted_data.append(formatted_line)
-    #     return formatted_data
-    #
-    # def get_formatted_line(self, line):
-    #     return line
-    #
-    # def make_type_by_index_rules(self, index, line):
-    #     if index in range(0, 12) or index in range(13, 16):
-    #         return bool(line[index])
-    #     elif index is 12 or index is 16:
-    #         return int(line[index])
-    #     else:
-    #         msg = "not all data has rules, add rule for {}".format(index)
-    #         exit(msg)
-    #
     def get_columns_as_rows(self, rows):
         columns = len(rows[0])
         for column_index in range(0, columns):
@@ -103,8 +85,4 @@ if __name__ == "__main__":
     analyzer = DataExtractor('./zoo.data.txt', True)
     rows = analyzer.get_specyfic_group_rows_with_attribute('outlook', 'sunny')
     print(list(rows))
-    # print(analyzer.labels)
-    # print(analyzer.data_rows)
-    # for index, column in enumerate(analyzer.get_columns_as_rows()):
-    #     print("Column name: {}".format(analyzer.labels[index]))
-    #     print(list(column))
+

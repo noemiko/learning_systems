@@ -1,18 +1,16 @@
 from data_extractor import DataExtractor
 from entrophy import Entrophy
 from information_gain import get_information_gain
-import pprint
-class Analyzer(object):
 
-    def calculate_C4(self, group, attribute):
-        extractor = DataExtractor('./zoo.data.txt', True)
+
+class TreeGenerator(object):
+
+    def calculate_C4(self, group, attribute, extractor, loop_index):
         if group is None or attribute is None:
             rows = extractor.data_rows
         else:
             rows = extractor.get_specyfic_group_rows_with_attribute(group, attribute)
-        columns = extractor.get_columns_as_rows(list(rows))
-        #column name with cases
-        rows_with_labels = extractor.create_nested_rows(columns)
+        rows_with_labels = extractor.create_nested_rows(list(rows))
 
         classification_column = rows_with_labels.pop(extractor.labels[-1])
         attribute_classes = extractor.assign_classes_to_column_cases(
@@ -22,37 +20,39 @@ class Analyzer(object):
         calculate = Entrophy()
         entrophy_values = calculate.get_entrophy_for_dict(attribute_classes)
         class_entrophy = calculate.get_entrophy_for_row(classification_column)
-
         #info
         gain = get_information_gain(entrophy_values, class_entrophy)
 
-        root_name = max(gain, key=gain.get)
-        rules = ""
-        node = entrophy_values[root_name]
-        self.build_tree(gain, entrophy_values)
-
-    def build_tree(self, gain, entrophy_values):
         next_node_name = max(gain, key=gain.get)
-        gain.pop(next_node_name, '')
+        self.build_tree(next_node_name, entrophy_values, extractor, loop_index)
+        loop_index += 1
+
+    def build_tree(self, next_node_name, entrophy_values, extractor, loop_index):
         node_cases = entrophy_values[next_node_name]
-        print("column {} ".format(next_node_name))
-        for case, values in node_cases.items():
-            if values['entrophy'] == 0.0:
-                values.pop("count")
-                values.pop("entrophy")
-                result = list(values.keys())[0]
-                print("column {} attribute: {} is always {} ".format(next_node_name, case, result))
-                print("----------------")
+        level_lines = "-----"*loop_index
+        empty_place = "      "*loop_index
+        print("{} {}".format(level_lines, next_node_name))
+        print("{}|".format(empty_place))
+        for attribute, atribute_details in node_cases.items():
+            if atribute_details['entrophy'] == 0.0:
+                result = self.get_leaf(atribute_details)
+                print("{} when is {} then {}".format(level_lines, attribute, result))
             else:
-                print("column {} attribute: {}".format(next_node_name, case))
-                print('was divided by:')
-                self.calculate_C4(next_node_name, case)
+                print("{} {} is divided by ".format(level_lines, attribute))
+                loop_index += 1
+                self.calculate_C4(next_node_name, attribute, extractor, loop_index)
 
-
-
-
+    def get_leaf(self, values):
+        values.pop("count")
+        values.pop("entrophy")
+        return list(values.keys())[0]
 
 
 if __name__ == "__main__":
-    analyzer = Analyzer()
-    analyzer.calculate_C4(None, None)
+    extractor = DataExtractor('./zoo.data.txt', False)
+    analyzer = TreeGenerator()
+    try:
+        analyzer.calculate_C4(None, None, extractor, 1)
+    except RecursionError as err:
+        print("There is no optimal solution.")
+        print(err)
