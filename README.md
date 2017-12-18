@@ -10,7 +10,7 @@ python3 main.py
 ```
 
 Tree for zoo.data.txt
-
+```
 ----- column 0
       |
 ----- when is outlook then class
@@ -25,3 +25,4 @@ Tree for zoo.data.txt
                   |
 --------------- when is false then Play
 --------------- when is true then Don'tPlay
+```
